@@ -224,4 +224,108 @@ var.test(calorias.hombres,calorias.mujeres)
 
 
 
+######################################
+# COMPARACION DE PROPORCIONES
+######################################
+
+fumador <- c( 9, 4)
+
+total <- c( 12, 13)
+
+prop1<-prop.test(9,12)  #  0.75        0.4283561 - 0.9330643
+prop2<-prop.test(4,13)  #  0.3076923   0.1035852 - 0.6111510
+
+
+
+tabla<-data.frame(muestra=c("A","B"),Proporcion=NA,IC95=NA,p.valor=NA,stringsAsFactors=F)
+
+round(prop1$"estimate",digits=2)
+round(prop1$"conf.int"[1],digits=2)
+round(prop1$"conf.int"[2],digits=2)
+
+tabla$"Proporcion"<-c(round(prop1$"estimate",digits=2),round(prop2$"estimate",digits=2))
+
+tabla$"IC95"<-c(paste(round(prop1$"conf.int"[1],digits=2),round(prop1$"conf.int"[2],digits=2),sep="-"),
+paste(round(prop2$"conf.int"[1],digits=2),round(prop2$"conf.int"[2],digits=2),sep="-"))
+
+res<-prop.test(fumador, total)
+
+tabla$"p.valor"<-c(res$"p.value",NA)
+
+
+datos$"bmi" <- datos$"peso"/c(c(datos$"altura"/100)^2)
+
+tabla
+
+library("openxlsx")
+
+write.xlsx(tabla,file="/Users/pfernandezn/Desktop/tabla.xlsx")
+
+png("/Users/pfernandezn/Desktop/grafica1.png")
+
+hist(datos$"bmi")
+
+dev.off()
+
+
+####################################
+# Asociacion: Regresion lineal
+####################################
+
+lm(datos$"peso" ~ datos$"altura")
+
+modelo1<-lm(peso ~ altura,data=datos)
+names(modelo1)
+summary(modelo1)
+
+confint(modelo1)
+
+
+modelo1$"coefficients"
+
+hist(modelo1$"residuals")
+quantile(modelo1$"residuals")
+range(modelo1$"residuals")
+
+modelo1$"fitted.values"
+
+plot(x=datos$"altura",y=datos$"peso",pch=19,col="red")
+abline(lm(peso ~ altura,data=datos))
+
+hist(modelo1$"residuals")
+
+datos$sexo<-as.numeric(as.factor(datos$sexo)) # Recodificais sexo para que sea numerica
+modelo1<-lm(peso ~ sexo,data=datos)
+names(modelo1)
+summary(modelo1)
+
+
+confint(modelo1)
+
+
+cor(datos$peso,datos$altura,method="pearson")
+
+cor(datos$peso,datos$altura,method="pearson")^2
+
+cor.test(x=datos$altura,y=datos$peso)
+
+cor(datos$peso,datos$altura,method="spearman")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

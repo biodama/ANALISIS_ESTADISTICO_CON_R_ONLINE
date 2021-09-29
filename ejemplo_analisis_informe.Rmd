@@ -1,0 +1,293 @@
+---
+title: "null"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# CURSO ANALISIS ESTADISTICO CON R
+
+# Análisis de Comparación
+
+&nbsp;
+
+&nbsp;
+
+**Cargar la base de datos del curso "datos.curso1.RData"**
+
+```{r , collapse=TRUE,results="asis"}   
+   	
+load("datos/datos.curso1.RData")
+
+```
+
+&nbsp;
+
+**1. Crea una variable llamada bmi (indice de masa corporal) y realiza los siguientes ejercicios**
+
+```{r , echo=TRUE, collapse=TRUE}   
+   	
+datos$bmi <- datos$peso/c(c(datos$altura/100)^2)
+
+```
+
+&nbsp;
+
+**2. Contrasta parametricamente y no parametricamente si el bmi medio de la muestra es distinto de 25**
+
+```{r , echo=TRUE, collapse=TRUE}   
+   	
+mean(datos$bmi)
+
+shapiro.test(datos$bmi)
+
+t.test(datos$bmi,mu=25)
+
+wilcox.test(datos$bmi)
+ 
+```
+
+&nbsp;
+
+**3. Contrasta parametricamente y no parametricamente si el bmi es mayor de 25**
+
+```{r , echo=TRUE, collapse=TRUE}   
+   	
+t.test(datos$bmi,mu=25,alternative="greater")
+
+wilcox.test(datos$bmi,mu=25,alternative="greater")
+
+```
+
+&nbsp;
+
+**4. Crea un boxplot del bmi e identifica los valores outliers y extremos**
+
+```{r , echo=TRUE, collapse=TRUE}   
+   	
+boxplot(datos$bmi,ylim=c(24,30))
+
+quantile(datos$bmi)
+
+range(datos$bmi)
+
+limite.extremo.up <- as.numeric(quantile(datos$bmi)[4]+
+c((quantile(datos$bmi)[4]-quantile(datos$bmi)[2])*1.5))
+
+limite.extremo.up
+
+limite.extremo.down <- as.numeric(quantile(datos$bmi)[2]-
+c((quantile(datos$bmi)[4]-quantile(datos$bmi)[2])*1.5))
+
+limite.extremo.down
+
+sum(datos$bmi>limite.extremo.up)
+
+sum(datos$bmi<limite.extremo.down)
+
+```
+
+&nbsp;
+
+**5. Compara parametricamente y no parametricamente el bmi medio de hombres y mujeres**
+
+```{r , echo=TRUE, collapse=TRUE}   
+   	
+bmi.hombres<-datos$bmi[datos$sexo%in%"Hombre"]
+
+bmi.mujeres<-datos$bmi[datos$sexo%in%"Mujer"]	
+
+t.test(bmi.hombres,bmi.mujeres)
+
+wilcox.test(bmi.hombres,bmi.mujeres)	
+
+t.test(datos$bmi~datos$sexo)
+
+wilcox.test(datos$bmi~datos$sexo)
+
+```
+
+&nbsp;
+
+**6. Crea una nueva variable de bmi llamada bmi.post (bmi calculando después de las vacaciones de navidad) que sea igual al bmi + sample(c(1:5),dim(datos)[1],replace=T). (Poner antes de ejecutar la suma set.seed(10)). Después compara en ambos sexos y en hombres y mujeres por separado si la media de bmi.post es distinta de bmi**
+
+```{r , echo=TRUE, collapse=TRUE}   
+   	
+set.seed(10)	
+datos$bmi.post<-datos$bmi + sample(c(1:5),dim(datos)[1],replace=T)	
+	
+datos.hombres<-datos[datos$sexo%in%"Hombre",]
+datos.mujeres<-datos[datos$sexo%in%"Mujer",]
+
+t.test(datos$bmi,datos$bmi.post,paired=T)	
+wilcox.test(datos$bmi,datos$bmi.post,paired=T)
+
+t.test(datos.hombres$bmi,datos.hombres$bmi.post,paired=T)	
+wilcox.test(datos.hombres$bmi,datos.hombres$bmi.post,paired=T)
+
+t.test(datos.mujeres$bmi,datos.mujeres$bmi.post,paired=T)	
+wilcox.test(datos.mujeres$bmi,datos.mujeres$bmi.post,paired=T)
+
+```
+
+&nbsp;
+
+**7. Crea representaciones gráficas que describan el bmi y el bmi.post**
+
+```{r , echo=TRUE, collapse=TRUE,fig.height=15, fig.width=10}   
+   	
+par(mfrow=c(3,2))
+boxplot(datos$bmi,main="Both bmi",ylim=c(25,34))
+boxplot(datos$bmi.post,main="Both bmi.post",ylim=c(25,34))
+boxplot(datos.hombres$bmi,main="Men bmi",ylim=c(25,34))
+boxplot(datos.hombres$bmi.post,main="Men bmi.post",ylim=c(25,34))
+boxplot(datos.mujeres$bmi,main="Women bmi",ylim=c(25,34))
+boxplot(datos.mujeres$bmi.post,main="Women bmi.post",ylim=c(25,34))
+
+```
+
+**8. Compara si el peso es distinto según el nivel de estudios (parametricamente y no parametricamente) en ambos sexos y en hombres y mujeres por separado**
+
+```{r , echo=TRUE, collapse=TRUE,fig.height=15, fig.width=10}   
+
+par(mfrow=c(3,1))
+boxplot(datos$peso~datos$nivel.estudios)
+boxplot(datos.hombres$peso~datos.hombres$nivel.estudios)
+boxplot(datos.mujeres$peso~datos.mujeres$nivel.estudios)
+
+tapply(datos$peso,datos$nivel.estudios,mean)
+tapply(datos.hombres$peso,datos.hombres$nivel.estudios,mean)
+tapply(datos.mujeres$peso,datos.mujeres$nivel.estudios,mean)
+
+tapply(datos$peso,datos$nivel.estudios,shapiro.test)
+tapply(datos.hombres$peso,datos.hombres$nivel.estudios,shapiro.test)
+tapply(datos.mujeres$peso,datos.mujeres$nivel.estudios,shapiro.test)
+
+bartlett.test(datos$peso,datos$nivel.estudios)
+bartlett.test(datos.hombres$peso,datos.hombres$nivel.estudios)
+bartlett.test(datos.mujeres$peso,datos.mujeres$nivel.estudios)
+
+anova(lm(datos$peso~datos$nivel.estudios))
+anova(lm(datos.hombres$peso~datos.hombres$nivel.estudios))
+anova(lm(datos.mujeres$peso~datos.mujeres$nivel.estudios))
+
+pairwise.t.test(datos$peso,datos$nivel.estudios,p.adj="bonferroni")
+pairwise.t.test(datos.hombres$peso,datos.hombres$nivel.estudios,p.adj="bonferroni")
+pairwise.t.test(datos.mujeres$peso,datos.mujeres$nivel.estudios,p.adj="bonferroni")
+
+kruskal.test(datos$peso~as.factor(datos$nivel.estudios))
+kruskal.test(datos.hombres$peso~as.factor(datos.hombres$nivel.estudios))
+kruskal.test(datos.mujeres$peso~as.factor(datos.mujeres$nivel.estudios))
+
+
+```
+
+**9. Compara si el peso es distinto segun "fumador" (parametricamente y no parametricamente) en ambos sexos y en hombres y mujeres por separado**
+
+```{r , echo=TRUE, collapse=TRUE,fig.height=15, fig.width=10}   
+
+par(mfrow=c(3,1))
+boxplot(datos$peso~datos$fumador)
+boxplot(datos.hombres$peso~datos.hombres$fumador)
+boxplot(datos.mujeres$peso~datos.mujeres$fumador)
+
+tapply(datos$peso,datos$fumador,mean)
+tapply(datos.hombres$peso,datos.hombres$fumador,mean)
+tapply(datos.mujeres$peso,datos.mujeres$fumador,mean)
+
+tapply(datos$peso,datos$fumador,shapiro.test)
+tapply(datos.hombres$peso,datos.hombres$fumador,shapiro.test)
+tapply(datos.mujeres$peso,datos.mujeres$fumador,shapiro.test)
+
+bartlett.test(datos$peso,datos$fumador)
+bartlett.test(datos.hombres$peso,datos.hombres$fumador)
+bartlett.test(datos.mujeres$peso,datos.mujeres$fumador)
+
+anova(lm(datos$peso~datos$fumador))
+anova(lm(datos.hombres$peso~datos.hombres$fumador))
+anova(lm(datos.mujeres$peso~datos.mujeres$fumador))
+
+pairwise.t.test(datos$peso,datos$fumador,p.adj="bonferroni")
+pairwise.t.test(datos.hombres$peso,datos.hombres$fumador,p.adj="bonferroni")
+pairwise.t.test(datos.mujeres$peso,datos.mujeres$fumador,p.adj="bonferroni")
+
+kruskal.test(datos$peso~as.factor(datos$fumador))
+kruskal.test(datos.hombres$peso~as.factor(datos.hombres$fumador))
+kruskal.test(datos.mujeres$peso~as.factor(datos.mujeres$fumador))
+
+```
+
+**10. Compara si la proporción de personas fumadoras es igual al 37% en ambos sexos y en hombres y mujeres por separado**
+
+```{r , echo=TRUE, collapse=TRUE}   
+
+table(datos$fumador)
+table(datos$fumador[datos$sexo%in%"Hombre"])
+table(datos$fumador[datos$sexo%in%"Mujer"])
+
+prop.table(table(datos$fumador))
+prop.table(table(datos$fumador[datos$sexo%in%"Hombre"]))
+prop.table(table(datos$fumador[datos$sexo%in%"Mujer"]))
+
+prop.test(as.numeric(table(datos$fumador)[2]),dim(datos)[1],0.37)
+prop.test(as.numeric(table(datos.hombres$fumador)[2]),dim(datos.hombres)[1],0.37)
+prop.test(as.numeric(table(datos.mujeres$fumador)[2]),dim(datos.mujeres)[1],0.37)
+
+```
+
+**11. Compara si la proporción de fumadores es distinta en hombres y mujeres**
+
+```{r , echo=TRUE, collapse=TRUE}   
+
+table(datos$fumador,datos$sexo)
+margin.table(table(datos$fumador,datos$sexo),2)
+prop.table(table(datos$fumador,datos$sexo),2)
+
+prop.table(table(datos$sexo,datos$fumador),1)
+
+prop.test(c(48,44),c(100,100))
+prop.test(table(datos$fumador,datos$sexo))
+
+prop.test(table(datos$sexo,datos$fumador)[,c(2,1)])
+# Cuidado que el success debe ir en la primera columna en este formarto
+
+```
+
+**12. Compara si la proporción de fumadores es igual según el nivel de estudios**
+
+```{r , echo=TRUE, collapse=TRUE}   
+
+table(datos$fumador,datos$nivel.estudios)
+table(datos$fumador,datos$nivel.estudios)[,c(2,3,1)]
+
+margin.table(table(datos$fumador,datos$nivel.estudios),2)
+prop.table(table(datos$fumador,datos$nivel.estudios),2)
+
+table(datos$nivel.estudios,datos$fumador)[c(2,3,1),c(2,1)]
+margin.table(table(datos$nivel.estudios,datos$fumador),1)[c(2,3,1)]
+prop.table(table(datos$nivel.estudios,datos$fumador),1)[c(2,3,1),c(2,1)]
+
+
+prop.test(c(34,24,34),c(75,50,75))
+prop.test(table(datos$nivel.estudios,datos$fumador)[c(2,3,1),c(2,1)])
+
+```
+
+**13. Crea gráficos que representen el número de personas fumadoras y otros que presenten el nivel de estudios**
+
+```{r , echo=TRUE, collapse=TRUE}   
+
+barplot(table(datos$fumador),density=T)
+
+barplot(table(datos$nivel.estudios),density=T)
+
+barplot(prop.table(t(table(datos$nivel.estudios,datos$fumador))),beside=T,
+legend.text=colnames(prop.table(table(datos$nivel.estudios,datos$fumador))))
+
+```
+
