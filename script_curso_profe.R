@@ -313,18 +313,57 @@ cor(datos$peso,datos$altura,method="spearman")
 
 
 
+####################################
+# Confusion, Interaccion, mediacion
+####################################
 
 
 
+modelo1<-lm(peso ~ altura,data=datos)
+
+summary(modelo1)
+
+plot(x=datos$"altura",y=datos$"peso",pch=19,col="red")
+abline(lm(peso ~ altura,data=datos))
 
 
+modelo2 <- lm(peso ~ altura + sexo,data=datos)
+
+summary(modelo2)
+
+confint(modelo2)
+
+#################################################
+# Interaccion (tipo I) Analisis estratificado
+#################################################
+
+datos_hombres<-datos[datos$sexo%in%"Hombre",]
+modelo_hombres <- lm(peso ~ altura,data=datos_hombres)
+summary(modelo_hombres) # 0.10396
 
 
+datos_mujeres<-datos[datos$sexo%in%"Mujer",]
+modelo_mujeres <- lm(peso ~ altura,data=datos_mujeres)
+summary(modelo_mujeres) # 0.08178
 
+# Ambos sexos: 0.09364
 
+par(mfrow=c(1,2))
+plot(x=datos_hombres$"altura",y=datos_hombres$"peso",pch=19,col="red")
+abline(lm(peso ~ altura,data=datos_hombres))
 
+plot(x=datos_mujeres$"altura",y=datos_mujeres$"peso",pch=19,col="red")
+abline(lm(peso ~ altura,data=datos_mujeres))
 
+#################################################
+# Interaccion (tipo I) Analisis estratificado
+#################################################
 
+modelo_interaccion <- lm(peso ~ altura + sexo + altura*sexo,data=datos)
+
+summary(modelo_interaccion)
+
+plot(modelo2)
 
 
 
