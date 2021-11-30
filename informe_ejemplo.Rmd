@@ -1,0 +1,172 @@
+---
+title: "INFOME EJEMPLO"
+header-includes:
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- \usepackage[most]{tcolorbox}
+- \definecolor{light-yellow}{rgb}{1, 0.95, 0.7}
+- \newtcolorbox{myquote}{colback=blue!5!white,grow to right by=-10mm,grow to left
+  by=-10mm, boxrule=0pt,boxsep=0pt,breakable}
+- \newcommand{\todo}[1]{\begin{myquote} \textbf{} \emph{#1} \end{myquote}}
+- \newcommand{\bcenter}{\begin{center}}
+- \newcommand{\ecenter}{\end{center}}
+- \usepackage[document]{ragged2e}
+output: pdf_document
+lang: es-ES
+toc:  FALSE
+theme: united
+---
+
+\center 
+
+# Mi primer informe
+
+&nbsp;
+
+&nbsp;
+
+![](/Users/pfernandezn/Desktop/ANALISIS_ESTADISTICO_CON_R_ONLINE-master/datos/IMAGEN2.png){width=50%}
+
+
+
+\newpage
+
+\justify
+
+\lhead{\includegraphics[height=1.2cm] 
+{/Users/pfernandezn/Desktop/ANALISIS_ESTADISTICO_CON_R_ONLINE-master/datos/IMAGEN1.png}}
+\rhead{\includegraphics[height=1.2cm] 
+{/Users/pfernandezn/Desktop/ANALISIS_ESTADISTICO_CON_R_ONLINE-master/datos/IMAGEN2.png}}
+
+&nbsp;
+
+\tableofcontents 
+\listoffigures
+\listoftables
+\newpage
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,fig.align="center",fig.width=12, fig.height=30)
+```
+
+#   TÍTULO 1
+## R Markdown
+### subtítulo1 R Markdown
+
+```{r sc1, echo=FALSE,message=FALSE, warning=FALSE, fig.cap="Boxplots",out.width="50%",out.height="50%" }
+
+
+
+library(knitr)
+library(gdata)
+library(plyr)
+library(kableExtra)
+
+setwd("/Users/pfernandezn/Desktop/ANALISIS_ESTADISTICO_CON_R_ONLINE-master/datos/")
+
+load("datos.curso1.RData")
+
+tabla<-data.frame(Estadistico=c("media","mediana","media.geometrica","cuartiles",
+"coeficiente de variacion","desviación típica","minimo","maximo"),
+Edad=NA,Peso=NA,Altura=NA,
+stringsAsFactors=FALSE)
+
+tabla[,"Edad"]<-c(mean(datos$edad), median(datos$edad),exp(mean(log(datos$edad))),
+paste(round(quantile(datos$edad),digits=2),collapse=";"),(sd(datos$edad)/mean(datos$edad))*100,
+sd(datos$edad),range(datos$edad)[1],range(datos$edad)[2])
+
+tabla[,"Peso"]<-c(mean(datos$peso), median(datos$peso),exp(mean(log(datos$peso))),
+paste(round(quantile(datos$peso),digits=2),collapse=";"),(sd(datos$peso)/mean(datos$peso))*100,
+sd(datos$peso),range(datos$peso)[1],range(datos$peso)[2])
+
+tabla[,"Altura"]<-c(mean(datos$altura), median(datos$altura),
+exp(mean(log(datos$altura))),paste(round(quantile(datos$altura),digits=2),collapse=";"),
+c(sd(datos$altura)/mean(datos$altura))*100,sd(datos$altura),
+range(datos$altura)[1],range(datos$altura)[2])
+
+kable(tabla)
+
+par(mfrow=c(3,1))
+
+boxplot(datos$"edad"~datos$"sexo",col=c("blue","red"),xlab="Sexo",ylab="Edad")
+boxplot(datos$"peso"~datos$"sexo",col=c("blue","red"),xlab="Sexo",ylab="Peso")
+boxplot(datos$"altura"~datos$"sexo",col=c("blue","red"),xlab="Sexo",ylab="Altura")
+
+
+```
+
+
+### subtítulo2 R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r sc2}
+
+
+setwd("/Users/pfernandezn/Desktop/ANALISIS_ESTADISTICO_CON_R_ONLINE-master/datos/")
+
+load("datos.curso1.RData")
+
+tabla<-data.frame(Estadistico=c("media","mediana","media.geometrica","cuartiles",
+"coeficiente de variacion","desviación típica","minimo","maximo"),
+Edad=NA,Peso=NA,Altura=NA,
+stringsAsFactors=FALSE)
+
+tabla[,"Edad"]<-c(mean(datos$edad), median(datos$edad),exp(mean(log(datos$edad))),
+paste(round(quantile(datos$edad),digits=2),collapse=";"),(sd(datos$edad)/mean(datos$edad))*100,
+sd(datos$edad),range(datos$edad)[1],range(datos$edad)[2])
+
+tabla[,"Peso"]<-c(mean(datos$peso), median(datos$peso),exp(mean(log(datos$peso))),
+paste(round(quantile(datos$peso),digits=2),collapse=";"),(sd(datos$peso)/mean(datos$peso))*100,
+sd(datos$peso),range(datos$peso)[1],range(datos$peso)[2])
+
+tabla[,"Altura"]<-c(mean(datos$altura), median(datos$altura),
+exp(mean(log(datos$altura))),paste(round(quantile(datos$altura),digits=2),collapse=";"),
+c(sd(datos$altura)/mean(datos$altura))*100,sd(datos$altura),
+range(datos$altura)[1],range(datos$altura)[2])
+
+print(tabla)
+
+```
+
+\newpage
+
+#   TÍTULO 2
+## Including Tables
+
+You can also embed plots, for example:
+
+```{r sc3, echo=FALSE,message=FALSE, warning=FALSE }
+
+library(knitr)
+library(gdata)
+library(plyr)
+library(kableExtra)
+
+
+library("summarytools")
+tabla1<-freq(datos$"estado.civil", plain.ascii = FALSE, style = "rmarkdown")
+kable(tabla1)
+
+tabla2<-descr(datos)
+kable(tabla2)
+
+
+```
+
+```{r setup2, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,fig.align="center",fig.width=16, fig.height=12)
+```
+
+
+```{r sc4, echo=FALSE,message=FALSE, warning=FALSE,fig.cap="Barplot"}
+
+barplot(prop.table(table(datos$"estado.civil",datos$"sexo"),2)*100,beside=TRUE,
+        legend=rownames(table(datos$"estado.civil",datos$"sexo")))
+
+
+```
+
