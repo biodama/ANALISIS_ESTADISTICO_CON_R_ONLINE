@@ -1,0 +1,40 @@
+---
+title: "PRUEBA_CURSO"
+author: "BIODAMA_ALUMNOS"
+date: "12/1/2021"
+output: pdf_document
+---
+
+```{r configuracion, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+## ANALISIS DESCRIPTIVO
+
+Se realiza un estudio descriptivo de los datos proporcionados por la RED NACIONAL DE ANALISIS CON R.
+
+```{r carga_datos, echo=FALSE,message=FALSE, warning=FALSE}
+
+rm(list=ls())
+
+setwd("/Users/pfernandezn/Desktop/ANALISIS_ESTADISTICO_CON_R_ONLINE-master/datos/")
+
+load("datos.curso1.RData")
+
+
+```
+
+## Graficos
+
+Graficos descriptivos de los datos
+
+```{r graficos, echo=FALSE}
+
+barplot(prop.table(table(datos$"estado.civil",datos$"sexo"),2)*100,beside=TRUE,
+        legend=rownames(table(datos$"estado.civil",datos$"sexo")))
+
+
+```
+
