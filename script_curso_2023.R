@@ -437,7 +437,7 @@ mcnemar.test(Performance)
 # Comparacion de mas de dos proporciones pareadas
 
 
-
+Ver: https://rcompanion.org/handbook/H_05.html
 
 
 # Comparacion de conteos pareados numero de brotes de un paciente antes
